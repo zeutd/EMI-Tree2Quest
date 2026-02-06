@@ -1,0 +1,44 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+#issueTrackerURL = ""
+license = "Insert License Here"
+
+[[mods]]
+modId = "emi_tree2quest"
+version = "${version}"
+displayName = "EMI Tree2Quest"
+authors = "zeutd"
+description = '''
+A mod which can export EMI's Recipe Tree to FTB Quest!
+'''
+#logoFile = ""
+
+[[dependencies.emi_tree2quest]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.emi_tree2quest]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.emi_tree2quest]]
+modId = "emi"
+mandatory = true
+type = "required"
+versionRange = "${emi_version}"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.emi_tree2quest]]
+modId = "ftbquests"
+mandatory = true
+type = "required"
+versionRange = "[${ftb_quests_version},)"
+ordering = "AFTER"
+side = "BOTH"
