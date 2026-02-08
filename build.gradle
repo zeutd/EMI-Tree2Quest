@@ -46,6 +46,29 @@ subprojects {
             name = "Jared's maven"
             url = "https://maven.blamejared.com/"
         }
+        maven {
+            name = 'GTCEu Maven'
+            url = 'https://maven.gtceu.com'
+            content {
+                includeGroup 'com.gregtechceu.gtceu'
+            }
+        }
+        maven { // LDLib, Shimmer
+            name = "FirstDarkDev Maven"
+            url = "https://maven.firstdark.dev/snapshots"
+        }
+        exclusiveContent { // KubeJS and Rhino
+            forRepository { maven { url = "https://maven.latvian.dev/releases" } }
+            filter { includeGroup("dev.latvian.mods")}
+        }
+        exclusiveContent { // tterrag - registrate
+            forRepository { maven { url = "https://maven.tterrag.com/" } }
+            filter { includeGroup("com.tterrag.registrate") }
+        }
+        maven { // JEI mirror, AE2
+            name = "ModMaven"
+            url = "https://modmaven.dev"
+        }
     }
 
     loom {

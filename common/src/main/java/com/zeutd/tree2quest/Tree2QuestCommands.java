@@ -16,7 +16,7 @@ public class Tree2QuestCommands {
                         .executes(context -> {
                             int result = TreeGenerator.generate(context.getSource().getServer());
                             if (result == 1) context.getSource().sendSuccess(() -> Component.literal("Done!"), false);
-                            else if (result == 0) context.getSource().sendFailure(Component.literal("You doesn't have an recipe tree!"));
+                            else if (result == 0) context.getSource().sendFailure(Component.literal("You didn't have an recipe tree!"));
                             return result;
                         })
                 )

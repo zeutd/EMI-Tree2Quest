@@ -4,8 +4,8 @@ import dev.emi.emi.api.stack.FluidEmiStack;
 import dev.emi.emi.api.stack.ItemEmiStack;
 import dev.emi.emi.bom.BoM;
 import dev.emi.emi.bom.MaterialNode;
-import dev.ftb.mods.ftblibrary.config.Tristate;
 import dev.ftb.mods.ftbquests.net.CreateObjectResponseMessage;
+import dev.ftb.mods.ftbquests.net.EditObjectResponseMessage;
 import dev.ftb.mods.ftbquests.quest.Chapter;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.ServerQuestFile;
@@ -16,13 +16,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class TreeGenerator {
     public static Map<MaterialNode, Quest> questMap = new HashMap<>();
+    public static List<Integer> indices = new ArrayList<>();
     public static int generate(MinecraftServer server){
         try {
+            indices.clear();
+            if (BoM.tree == null) return 0;
             Chapter chapter = new Chapter(ServerQuestFile.INSTANCE.newID(), ServerQuestFile.INSTANCE, ServerQuestFile.INSTANCE.getDefaultChapterGroup());
             chapter.onCreated();
 
@@ -44,16 +46,21 @@ public class TreeGenerator {
             rootExtra.putString("type", rootTask.getType().getTypeForNBT());
             new CreateObjectResponseMessage(rootTask, rootExtra).sendToAll(server);
 
-            eachInChildren(BoM.tree.goal, (parent, node, depth, index) -> {
+            eachInChildren(BoM.tree.goal, (parent, node, depth) -> {
+                while (indices.size() < depth + 1){
+                     indices.add(0);
+                }
+                if (getNodeItem(node).isEmpty()) return;
                 Quest quest = new Quest(chapter.file.newID(), chapter);
                 quest.onCreated();
                 quest.setY(depth * 2);
-                quest.setX(index * 2);
+                quest.setX(indices.get(depth) * 2);
                 questMap.put(node, quest);
-                if (questMap.containsKey(parent)) {
-                    quest.addDependency(questMap.get(parent));
-                }
                 new CreateObjectResponseMessage(quest, null).sendToAll(server);
+                if (questMap.containsKey(parent)) {
+                    questMap.get(parent).addDependency(quest);
+                }
+                new EditObjectResponseMessage(questMap.get(parent)).sendToAll(server);
 
                 ItemTask task = new ItemTask(chapter.file.newID(), quest);
                 task.onCreated();
@@ -62,25 +69,28 @@ public class TreeGenerator {
                 CompoundTag extra = new CompoundTag();
                 extra.putString("type", task.getType().getTypeForNBT());
                 new CreateObjectResponseMessage(task, extra).sendToAll(server);
-
+                indices.set(depth, indices.get(depth) + 1);
             });
             ServerQuestFile.INSTANCE.markDirty();
             ServerQuestFile.INSTANCE.saveNow();
-        } catch(NullPointerException e){
-            return 0;
+            return 1;
+        } catch (Exception e){
+            Tree2QuestMod.LOGGER.error(e);
         }
-        return 1;
+        return 0;
     }
-    public static void eachInChildren(MaterialNode root, int depth, QuadConsumer<MaterialNode, MaterialNode, Integer, Integer> operation){
+    //size:2
+    //depth:1
+    //0 1
+    public static void eachInChildren(MaterialNode root, int depth, TriConsumer<MaterialNode, MaterialNode, Integer> operation){
         if (root.children == null) return;
         for (int i = 0; i < root.children.size(); i++) {
             MaterialNode node = root.children.get(i);
-            operation.accept(root, node, depth + 1, i);
+            operation.accept(root, node, depth + 1);
             eachInChildren(node, depth + 1, operation);
         }
-
     }
-    public static void eachInChildren(MaterialNode root, QuadConsumer<MaterialNode, MaterialNode, Integer, Integer> operation){
+    public static void eachInChildren(MaterialNode root, TriConsumer<MaterialNode, MaterialNode, Integer> operation){
         eachInChildren(root, 0, operation);
     }
     public static String getNodeName(MaterialNode node){

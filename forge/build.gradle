@@ -2,11 +2,11 @@ plugins {
     id 'com.gradleup.shadow'
 }
 
-loom {
-    forge {
-        mixinConfig "emi_tree2quest.mixins.json"
-    }
-}
+//loom {
+//    forge {
+//        mixinConfig "emi_tree2quest.mixins.json"
+//    }
+//}
 
 architectury {
     platformSetupLoomIde()
@@ -46,11 +46,16 @@ dependencies {
     modCompileOnly "dev.emi:emi-forge:${emi_version}:api"
     modLocalRuntime "dev.emi:emi-forge:${emi_version}"
 
-    modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
-    modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+//    modLocalRuntime("com.gregtechceu.gtceu:gtceu-${minecraft_version}:${gtm_version}")
+//    modLocalRuntime("com.lowdragmc.ldlib:ldlib-forge-${minecraft_version}:${ldlib_version}")
+//    modLocalRuntime "dev.toma.configuration:configuration-forge-${minecraft_version}:${configuration_version}"
+//    modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
+//    modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 
-    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0"))
-    implementation(include("io.github.llamalad7:mixinextras-forge:0.2.0"))
+//    modRuntimeOnly("io.github.llamalad7:mixinextras-common:0.2.0")
+//    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0"))
+//    implementation(include("io.github.llamalad7:mixinextras-forge:0.2.0"))
+    modRuntimeOnly "com.tterrag.registrate:Registrate:${registrate_version}"
 }
 
 processResources {
